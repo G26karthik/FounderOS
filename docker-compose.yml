@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  # ── Qdrant Vector Database ──────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: founderos-qdrant
+    ports:
+      - "6333:6333"   # REST API
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  # ── FastAPI Backend ─────────────────────────
+  backend:
+    build: ./backend
+    container_name: founderos-backend
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+
+  # ── React Frontend ──────────────────────────
+  frontend:
+    build: ./frontend
+    container_name: founderos-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  qdrant_data:

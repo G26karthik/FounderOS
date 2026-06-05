@@ -1,0 +1,24 @@
+# Python gitignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.env
+
+# Javascript gitignore
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -22,3 +22,7 @@ dist-ssr/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Project-specific local exclusions
+DEPLOYMENT.md
+*SKILL.md

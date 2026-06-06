@@ -4,7 +4,7 @@
 
 > **Hackathon Submission** for HiDevs *"Dawn of the Autonomous AI Builder"*  
 > **Theme**: *"One Man, An Entire System"* — A voice-first digital workspace converting spoken thoughts into structured decisions, tasks, and pattern insights.
-> ** Live Deployment** : https://founder-os-pi-lemon.vercel.app/
+> **Live Deployment** : https://founder-os-pi-lemon.vercel.app/
 
 FounderOS captures everything a founder says via voice (integrated with **Omi**), processes transcripts through specialized AI agents (**Lyzr**), stores them in a cloud semantic memory (**Qdrant**), and lets them query their execution history conversationally.
 

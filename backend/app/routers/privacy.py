@@ -45,3 +45,16 @@ async def delete_entry(collection: str, point_id: str):
         raise HTTPException(status_code=500, detail="Failed to delete entry")
 
     return {"status": "deleted", "collection": collection, "id": point_id}
+
+
+@router.put("/entries/{collection}/{point_id}")
+async def update_entry(collection: str, point_id: str, payload: dict):
+    """Update payload fields of a specific entry in a collection."""
+    if collection not in qdrant_memory.COLLECTIONS:
+        raise HTTPException(status_code=404, detail=f"Collection '{collection}' not found")
+
+    success = qdrant_memory.update_entry_payload(collection, point_id, payload)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to update entry")
+
+    return {"status": "updated", "collection": collection, "id": point_id, "updated_fields": payload}

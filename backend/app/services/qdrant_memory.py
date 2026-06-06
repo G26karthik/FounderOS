@@ -232,6 +232,21 @@ def delete_point(collection: str, point_id: str) -> bool:
         return False
 
 
+def update_entry_payload(collection: str, point_id: str, payload: dict) -> bool:
+    """Update (merge) the payload of a specific entry in a collection."""
+    client = _get_client()
+    try:
+        client.set_payload(
+            collection_name=collection,
+            payload=payload,
+            points=[point_id],
+        )
+        return True
+    except Exception as e:
+        logger.error(f"Update payload error: {e}")
+        return False
+
+
 def get_all_entries_for_digest(days: int = 7) -> list[dict]:
     """
     Fetch all recent entries across collections for pattern synthesis.

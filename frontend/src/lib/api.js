@@ -1,4 +1,21 @@
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+let API_BASE = import.meta.env.VITE_API_URL || '';
+
+if (!API_BASE) {
+  API_BASE = '/api';
+} else {
+  // Ensure /api prefix is present in the base url
+  if (!API_BASE.endsWith('/api') && !API_BASE.includes('/api/')) {
+    if (API_BASE.endsWith('/')) {
+      API_BASE = API_BASE.slice(0, -1);
+    }
+    API_BASE = `${API_BASE}/api`;
+  }
+}
+
+// Clean trailing slash
+if (API_BASE.endsWith('/')) {
+  API_BASE = API_BASE.slice(0, -1);
+}
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;

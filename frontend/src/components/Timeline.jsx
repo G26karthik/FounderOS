@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTimeline } from '../lib/api';
+import { getTimeline, deleteEntry, updateEntry, getCollections } from '../lib/api';
 import EntryCard from './EntryCard';
 
 /**
@@ -11,6 +11,7 @@ export default function Timeline() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState({ decisions: 0, tasks: 0, ideas: 0, patterns: 0 });
 
   const filters = [
     { id: 'all', label: 'All', icon: '📋' },
@@ -25,11 +26,37 @@ export default function Timeline() {
     try {
       const result = await getTimeline(type);
       setEntries(result.entries || []);
+
+      // Fetch collection stats for metrics dashboard
+      const statsRes = await getCollections();
+      const newStats = { decisions: 0, tasks: 0, ideas: 0, patterns: 0 };
+      statsRes.collections?.forEach((c) => {
+        newStats[c.name] = c.count;
+      });
+      setStats(newStats);
     } catch (err) {
       setError('Failed to load timeline. Is the backend running?');
       setEntries([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (collection, id) => {
+    try {
+      await deleteEntry(collection, id);
+      fetchEntries(filter);
+    } catch (err) {
+      alert(`Failed to delete entry: ${err.message}`);
+    }
+  };
+
+  const handleUpdate = async (collection, id, payload) => {
+    try {
+      await updateEntry(collection, id, payload);
+      fetchEntries(filter);
+    } catch (err) {
+      alert(`Failed to update entry: ${err.message}`);
     }
   };
 
@@ -53,6 +80,30 @@ export default function Timeline() {
         >
           ↻ Refresh
         </button>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in">
+        {[
+          { label: 'Decisions', count: stats.decisions, color: 'var(--color-decision)', bg: 'rgba(59, 130, 246, 0.05)', icon: '⚡' },
+          { label: 'Tasks', count: stats.tasks, color: 'var(--color-task)', bg: 'rgba(16, 185, 129, 0.05)', icon: '✅' },
+          { label: 'Ideas', count: stats.ideas, color: 'var(--color-idea)', bg: 'rgba(245, 158, 11, 0.05)', icon: '💡' },
+          { label: 'Patterns', count: stats.patterns, color: 'var(--color-pattern)', bg: 'rgba(139, 92, 246, 0.05)', icon: '🔮' },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="glass-card p-4 flex items-center gap-4 border-l-4"
+            style={{ borderLeftColor: stat.color }}
+          >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ background: stat.bg, color: stat.color }}>
+              {stat.icon}
+            </div>
+            <div>
+              <div className="text-2xl font-bold font-mono text-[var(--color-text-primary)]">{stat.count}</div>
+              <div className="text-xs text-[var(--color-text-secondary)]">{stat.label}</div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Filters */}
@@ -109,7 +160,13 @@ export default function Timeline() {
       {!loading && entries.length > 0 && (
         <div className="space-y-3">
           {entries.map((entry, i) => (
-            <EntryCard key={entry.id || i} entry={entry} index={i} />
+            <EntryCard
+              key={entry.id || i}
+              entry={entry}
+              index={i}
+              onDelete={handleDelete}
+              onUpdate={handleUpdate}
+            />
           ))}
         </div>
       )}

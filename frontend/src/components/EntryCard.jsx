@@ -2,8 +2,8 @@
  * FounderOS — Entry Card Component
  * Renders a single decision, task, idea, or pattern entry.
  */
-export default function EntryCard({ entry, index = 0 }) {
-  const { entry_type, text, date, metadata = {} } = entry;
+export default function EntryCard({ entry, index = 0, onDelete, onUpdate }) {
+  const { id, entry_type, text, date, metadata = {} } = entry;
 
   const typeConfig = {
     decision: { icon: '⚡', label: 'Decision', badgeClass: 'badge-decision' },
@@ -23,10 +23,30 @@ export default function EntryCard({ entry, index = 0 }) {
     } catch { return dateStr; }
   };
 
+  const collectionMap = {
+    decision: 'decisions',
+    task: 'tasks',
+    idea: 'ideas',
+    pattern: 'patterns'
+  };
+
+  const handleStatusToggle = () => {
+    if (!onUpdate) return;
+    const nextStatus = metadata.status === 'done' ? 'pending' : 'done';
+    onUpdate(collectionMap[entry_type], id, { ...metadata, status: nextStatus });
+  };
+
+  const handleDelete = () => {
+    if (!onDelete) return;
+    if (confirm(`Are you sure you want to delete this ${entry_type} from FounderOS memory?`)) {
+      onDelete(collectionMap[entry_type], id);
+    }
+  };
+
   return (
     <div
-      className="glass-card p-4 animate-fade-in"
-      style={{ animationDelay: `${index * 60}ms` }}
+      className="glass-card p-4 animate-fade-in hover:scale-[1.005] hover:border-[var(--color-border-glow)] transition-all duration-300"
+      style={{ animationDelay: `${index * 40}ms` }}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -41,12 +61,12 @@ export default function EntryCard({ entry, index = 0 }) {
               </span>
             )}
             {metadata.status && (
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                metadata.status === 'blocked' ? 'bg-red-500/10 text-red-400' :
-                metadata.status === 'done' ? 'bg-green-500/10 text-green-400' :
-                'bg-white/5 text-[var(--color-text-muted)]'
+              <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${
+                metadata.status === 'blocked' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                metadata.status === 'done' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                'bg-white/5 text-[var(--color-text-muted)] border border-white/10'
               }`}>
-                {metadata.status}
+                {metadata.status.replace('_', ' ')}
               </span>
             )}
             {metadata.theme && (
@@ -57,7 +77,7 @@ export default function EntryCard({ entry, index = 0 }) {
           </div>
 
           {/* Content */}
-          <p className="text-sm text-[var(--color-text-primary)] leading-relaxed">{text}</p>
+          <p className={`text-sm text-[var(--color-text-primary)] leading-relaxed ${entry_type === 'task' && metadata.status === 'done' ? 'line-through opacity-50' : ''}`}>{text}</p>
 
           {/* Rationale for decisions */}
           {metadata.rationale && metadata.rationale !== 'not stated' && (
@@ -74,9 +94,38 @@ export default function EntryCard({ entry, index = 0 }) {
           )}
         </div>
 
-        {/* Date */}
-        <div className="text-xs text-[var(--color-text-muted)] whitespace-nowrap shrink-0">
-          {formatDate(date)}
+        {/* Actions & Date */}
+        <div className="flex flex-col items-end gap-3 shrink-0">
+          <div className="text-xs text-[var(--color-text-muted)] font-mono whitespace-nowrap">
+            {formatDate(date)}
+          </div>
+          <div className="flex gap-1.5">
+            {/* Task completion toggle */}
+            {entry_type === 'task' && onUpdate && (
+              <button
+                onClick={handleStatusToggle}
+                className={`p-1.5 rounded-lg border text-xs transition-all ${
+                  metadata.status === 'done'
+                    ? 'border-green-500/30 text-green-400 bg-green-500/5 hover:bg-green-500/15'
+                    : 'border-[var(--color-border-subtle)] text-[var(--color-text-muted)] hover:text-green-400 hover:border-green-500/30'
+                }`}
+                title={metadata.status === 'done' ? 'Mark Task Pending' : 'Mark Task Done'}
+              >
+                {metadata.status === 'done' ? '🔄' : '✅'}
+              </button>
+            )}
+            
+            {/* Delete button */}
+            {onDelete && (
+              <button
+                onClick={handleDelete}
+                className="p-1.5 rounded-lg border border-[var(--color-border-subtle)] text-xs text-[var(--color-text-muted)] hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/5 transition-all"
+                title="Delete Entry"
+              >
+                🗑️
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

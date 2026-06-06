@@ -1,9 +1,4 @@
-/**
- * FounderOS — API Client
- * Fetch wrapper for all backend API calls.
- */
-
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
@@ -54,6 +49,13 @@ export async function clearCollection(name) {
 
 export async function deleteEntry(collection, id) {
   return request(`/entries/${collection}/${id}`, { method: 'DELETE' });
+}
+
+export async function updateEntry(collection, id, payload) {
+  return request(`/entries/${collection}/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
 }
 
 // ── Health ───────────────────────────────────

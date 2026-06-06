@@ -5,7 +5,9 @@
 > **Hackathon Submission** for HiDevs *"Dawn of the Autonomous AI Builder"*  
 > **Theme**: *"One Man, An Entire System"* — A voice-first digital workspace converting spoken thoughts into structured decisions, tasks, and pattern insights.
 
-> **Live Deployment** : https://founder-os-pi-lemon.vercel.app/
+### 🌐 Live Production Links
+- **Frontend App (Vercel)**: [https://founder-os-pi-lemon.vercel.app/](https://founder-os-pi-lemon.vercel.app/)
+- **Backend Service (Render)**: [https://founderos-backend-uuuv.onrender.com/](https://founderos-backend-uuuv.onrender.com/)
 
 FounderOS captures everything a founder says via voice (integrated with **Omi**), processes transcripts through specialized AI agents (**Lyzr**), stores them in a cloud semantic memory (**Qdrant**), and lets them query their execution history conversationally.
 
@@ -144,7 +146,7 @@ Render is ideal for hosting the FastAPI backend web service.
 3. **Build & Start Commands**:
    - **Runtime**: `Python`
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.5 --port $PORT`
+   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
      *(If deploying from the root workspace, configure the build command as `pip install -r backend/requirements.txt` and start command as `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`)*
 4. **Environment Variables**: Add all environment variables listed in the configuration section (e.g. `LYZR_API_KEY`, `OPENAI_API_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`, and `CORS_ORIGINS`). Make sure `CORS_ORIGINS` includes your production Vercel frontend URL.
 5. **Verify Endpoint**: Check Render's health endpoint: `https://your-service.onrender.com/api/health`.

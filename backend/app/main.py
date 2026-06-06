@@ -67,6 +67,14 @@ app = FastAPI(
 # ── CORS ──────────────────────────────────────
 settings = get_settings()
 origins = [o.strip() for o in settings.cors_origins.split(",")]
+
+# Safeguard: always permit production Vercel frontend and localhost
+vercel_prod = "https://founder-os-pi-lemon.vercel.app"
+if vercel_prod not in origins:
+    origins.append(vercel_prod)
+if "http://localhost:5173" not in origins:
+    origins.append("http://localhost:5173")
+
 logger.info(f"Configured CORS origins: {origins}")
 
 app.add_middleware(

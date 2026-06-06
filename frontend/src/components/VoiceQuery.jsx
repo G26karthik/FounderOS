@@ -6,12 +6,14 @@ import {
   SendIcon, 
   CheckIcon, 
   SparklesIcon, 
-  WarningIcon 
+  WarningIcon,
+  VolumeIcon,
+  MuteIcon
 } from './icons';
 
 /**
- * FounderOS — Voice Query Component (Apple Style)
- * Mic input with Web Speech API + text fallback + response display.
+ * FounderOS — Voice Query Component (Apple Style with Voice Output)
+ * Mic input with Web Speech API + text-to-speech feedback.
  */
 export default function VoiceQuery() {
   const [question, setQuestion] = useState('');
@@ -23,6 +25,8 @@ export default function VoiceQuery() {
   const [logText, setLogText] = useState('');
   const [logStatus, setLogStatus] = useState(null);
   const [speechSupported, setSpeechSupported] = useState(true);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   const recognitionRef = useRef(null);
 
   // Initialize Web Speech API
@@ -50,6 +54,13 @@ export default function VoiceQuery() {
     } else {
       setSpeechSupported(false);
     }
+    
+    // Stop speaking when leaving the tab
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
   }, [logMode]);
 
   const toggleListening = () => {
@@ -66,15 +77,42 @@ export default function VoiceQuery() {
     }
   };
 
+  const speakText = (text) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    
+    // Clean up text for better reading (remove markdown)
+    const cleanText = text.replace(/[*#_`~]/g, '');
+    
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeaking = () => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  };
+
   const handleQuery = async () => {
     if (!question.trim()) return;
     setLoading(true);
     setAnswer(null);
     setSources([]);
+    stopSpeaking();
+    
     try {
       const result = await queryMemory(question);
       setAnswer(result.answer);
       setSources(result.sources || []);
+      
+      if (voiceEnabled && result.answer) {
+        // Delay speaking slightly for smoother transition after loading state disappears
+        setTimeout(() => speakText(result.answer), 300);
+      }
     } catch (err) {
       setAnswer('Something went wrong. Is the backend running?');
     } finally {
@@ -102,8 +140,15 @@ export default function VoiceQuery() {
     }
   };
 
+  const toggleVoiceSetting = () => {
+    if (voiceEnabled) {
+      stopSpeaking();
+    }
+    setVoiceEnabled(!voiceEnabled);
+  };
+
   return (
-    <div className="w-full space-y-10 animate-fade-in">
+    <div className="w-full space-y-10 animate-fade-in max-w-3xl mx-auto px-4">
       {/* Centered Heading */}
       <div className="text-center space-y-3">
         <h2 className="text-4xl font-extrabold tracking-tight text-white">Ask Your Chief of Staff</h2>
@@ -112,8 +157,8 @@ export default function VoiceQuery() {
         </p>
       </div>
 
-      {/* Mode Selector */}
-      <div className="flex justify-center">
+      {/* Mode Selector & Voice Switch */}
+      <div className="flex flex-col items-center gap-4 justify-center">
         <div className="inline-flex rounded-full bg-white/3 border border-white/5 p-1">
           <button
             onClick={() => setLogMode(false)}
@@ -138,6 +183,17 @@ export default function VoiceQuery() {
             Log Thought
           </button>
         </div>
+        
+        {/* Voice Readback Settings Toggle */}
+        {!logMode && window.speechSynthesis ? (
+          <button 
+            onClick={toggleVoiceSetting}
+            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)] hover:text-white transition-colors cursor-pointer"
+          >
+            {voiceEnabled ? <VolumeIcon size={12} /> : <MuteIcon size={12} />}
+            <span>Voice readback is {voiceEnabled ? "Enabled" : "Disabled"}</span>
+          </button>
+        ) : null}
       </div>
 
       {/* Mic Trigger Section */}
@@ -253,7 +309,26 @@ export default function VoiceQuery() {
                 FounderOS Response
               </span>
             </div>
+            
+            {/* Speech playback trigger buttons */}
+            {window.speechSynthesis ? (
+              <button
+                onClick={() => {
+                  if (isSpeaking) {
+                    stopSpeaking();
+                  } else {
+                    speakText(answer);
+                  }
+                }}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/5 bg-white/3 hover:bg-white/6 transition-all text-[9px] font-black uppercase tracking-wider text-white cursor-pointer"
+                title={isSpeaking ? "Mute" : "Speak Response"}
+              >
+                {isSpeaking ? <MuteIcon size={10} /> : <VolumeIcon size={10} />}
+                <span>{isSpeaking ? "Mute" : "Speak"}</span>
+              </button>
+            ) : null}
           </div>
+          
           <p className="text-sm text-white leading-relaxed whitespace-pre-line font-semibold">
             {answer}
           </p>

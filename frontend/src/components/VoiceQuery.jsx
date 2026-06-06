@@ -6,12 +6,11 @@ import {
   SendIcon, 
   CheckIcon, 
   SparklesIcon, 
-  WarningIcon, 
-  ArrowRightIcon 
+  WarningIcon 
 } from './icons';
 
 /**
- * FounderOS — Voice Query Component
+ * FounderOS — Voice Query Component (Apple Style)
  * Mic input with Web Speech API + text fallback + response display.
  */
 export default function VoiceQuery() {
@@ -104,97 +103,96 @@ export default function VoiceQuery() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h2 className="text-4xl font-extrabold tracking-tight gradient-text">Ask Your Chief of Staff</h2>
-        <p className="text-[var(--color-text-secondary)] text-sm font-medium">
-          Query your decisions, tasks, and ideas — or log new thoughts directly to memory
+    <div className="w-full space-y-10 animate-fade-in">
+      {/* Centered Heading */}
+      <div className="text-center space-y-3">
+        <h2 className="text-4xl font-extrabold tracking-tight text-white">Ask Your Chief of Staff</h2>
+        <p className="text-[var(--color-text-secondary)] text-sm font-semibold tracking-wide">
+          Query decisions, tasks, and ideas — or stream thoughts directly into memory
         </p>
       </div>
 
-      {/* Mode Toggle */}
+      {/* Mode Selector */}
       <div className="flex justify-center">
-        <div className="inline-flex rounded-2xl bg-[var(--color-surface-secondary)] border border-[var(--color-border-subtle)] p-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
+        <div className="inline-flex rounded-full bg-white/3 border border-white/5 p-1">
           <button
             onClick={() => setLogMode(false)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--color-accent-primary)] ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
               !logMode
-                ? 'bg-[var(--color-accent-primary)] text-white shadow-[0_4px_12px_rgba(99,102,241,0.2)]'
-                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
+                ? 'bg-white text-black shadow-lg font-bold'
+                : 'text-[var(--color-text-secondary)] hover:text-white'
             }`}
           >
-            <SearchIcon size={14} />
+            <SearchIcon size={12} />
             Query Memory
           </button>
           <button
             onClick={() => setLogMode(true)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--color-accent-primary)] ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
               logMode
-                ? 'bg-[var(--color-accent-primary)] text-white shadow-[0_4px_12px_rgba(99,102,241,0.2)]'
-                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
+                ? 'bg-white text-black shadow-lg font-bold'
+                : 'text-[var(--color-text-secondary)] hover:text-white'
             }`}
           >
-            <MicIcon size={14} />
+            <MicIcon size={12} />
             Log Thought
           </button>
         </div>
       </div>
 
       {/* Mic Trigger Section */}
-      <div className="flex flex-col items-center justify-center gap-3">
+      <div className="flex flex-col items-center justify-center gap-4">
         {speechSupported ? (
           <button
             onClick={toggleListening}
             aria-label={isListening ? "Stop listening" : "Start voice input"}
-            className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer border ${
+            className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer border ${
               isListening
-                ? 'mic-pulse bg-red-500/10 border-red-500/40 text-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)]'
-                : 'bg-[var(--color-surface-secondary)] border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-text-primary)] hover:shadow-[0_0_20px_rgba(99,102,241,0.15)] hover:scale-105 active:scale-95'
+                ? 'mic-pulse bg-red-500/10 border-red-500/50 text-red-500 shadow-[0_0_24px_rgba(239,68,68,0.2)]'
+                : 'bg-white/4 border-white/8 text-white hover:border-white/20 hover:bg-white/6 hover:scale-105 active:scale-95'
             }`}
           >
-            <MicIcon size={32} className={isListening ? 'animate-pulse' : ''} />
+            <MicIcon size={28} className={isListening ? 'animate-pulse' : ''} />
           </button>
         ) : (
-          <div className="flex items-center gap-2 text-xs text-amber-500/80 bg-amber-500/5 px-4 py-2 rounded-xl border border-amber-500/20">
+          <div className="flex items-center gap-2.5 text-xs text-amber-500 bg-amber-500/5 px-4.5 py-2.5 rounded-2xl border border-amber-500/10">
             <WarningIcon size={14} />
-            <span>Voice input is not supported in this browser. Please use text input below.</span>
+            <span className="font-semibold">Voice input is not supported. Please type in the input field.</span>
           </div>
         )}
         {speechSupported ? (
-          <span className="text-[11px] font-mono tracking-widest uppercase text-[var(--color-text-muted)] font-semibold">
-            {isListening ? "Listening — Speak Now" : "Click to Speak"}
+          <span className="text-[10px] font-mono tracking-widest uppercase text-[var(--color-text-muted)] font-black">
+            {isListening ? "Listening — speak now" : "Click to speak"}
           </span>
         ) : null}
       </div>
 
-      {/* Text Form Input */}
-      <div className="glass-card p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <label htmlFor="search-input" className="sr-only">
-              {logMode ? 'Log thoughts to memory' : 'Ask FounderOS memory'}
-            </label>
+      {/* Search/Log input form (Apple Spotlight style) */}
+      <div className="glass-card p-2 rounded-2xl">
+        <div className="flex items-center gap-3">
+          <div className="flex-1 flex items-center gap-2 pl-3">
+            <SearchIcon size={16} className="text-[var(--color-text-muted)]" />
+            <label htmlFor="spotlight-input" className="sr-only">Input field</label>
             <input
-              id="search-input"
+              id="spotlight-input"
               type="text"
               name="query"
               value={logMode ? logText : question}
               onChange={(e) => logMode ? setLogText(e.target.value) : setQuestion(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={logMode ? 'Type your thought here to capture...' : 'Ask about your decisions, tasks, or distribution plans…'}
+              placeholder={logMode ? 'Speak or type your thought to log...' : 'Ask about product scope, marketing plans, blockers…'}
               autoComplete="off"
-              className="w-full bg-transparent border-0 outline-none text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] text-sm px-2 py-1 focus:ring-0"
+              className="w-full bg-transparent border-0 outline-none text-white placeholder:text-[var(--color-text-muted)] text-sm py-2.5 focus:ring-0"
             />
           </div>
           <button
             onClick={logMode ? handleLog : handleQuery}
             disabled={loading || (logMode ? !logText.trim() : !question.trim())}
-            className="glow-btn flex items-center gap-2 px-6 py-3 text-xs uppercase tracking-wider font-bold"
+            className="apple-btn px-6 py-2.5"
           >
             {loading ? (
               <>
-                <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                 <span>Thinking…</span>
               </>
             ) : (
@@ -207,66 +205,66 @@ export default function VoiceQuery() {
         </div>
       </div>
 
-      {/* Toast Feedback */}
+      {/* Logging Feedback Toasts */}
       {logStatus === 'sent' ? (
-        <div className="glass-card p-4 border-[var(--color-task)]/30 animate-fade-in flex items-center gap-3">
-          <div className="w-6 h-6 rounded-full bg-[var(--color-task)]/10 text-[var(--color-task)] flex items-center justify-center">
-            <CheckIcon size={14} />
+        <div className="glass-card p-4.5 border-green-500/20 bg-green-500/2 animate-fade-in flex items-center gap-3.5 rounded-2xl">
+          <div className="w-6 h-6 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center border border-green-500/20">
+            <CheckIcon size={12} />
           </div>
-          <p className="text-sm text-[var(--color-text-primary)] font-medium">
-            Thought logged successfully! Capturing decisions and tasks in the background…
+          <p className="text-xs text-[var(--color-text-secondary)] font-semibold leading-normal">
+            Thought logged successfully! Extracting decisions and tasks in the background…
           </p>
         </div>
       ) : null}
 
       {logStatus === 'error' ? (
-        <div className="glass-card p-4 border-[var(--color-danger)]/30 animate-fade-in flex items-center gap-3">
-          <div className="w-6 h-6 rounded-full bg-[var(--color-danger)]/10 text-[var(--color-danger)] flex items-center justify-center">
-            <WarningIcon size={14} />
+        <div className="glass-card p-4.5 border-red-500/20 bg-red-500/2 animate-fade-in flex items-center gap-3.5 rounded-2xl">
+          <div className="w-6 h-6 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center border border-red-500/20">
+            <WarningIcon size={12} />
           </div>
-          <p className="text-sm text-[var(--color-text-primary)] font-medium">
-            Failed to log thought. Please make sure the backend is active.
+          <p className="text-xs text-[var(--color-text-secondary)] font-semibold leading-normal">
+            Failed to connect to backend. Please ensure local service is running.
           </p>
         </div>
       ) : null}
 
-      {/* Loading Shimmer Skeleton */}
+      {/* Loading Skeleton */}
       {loading ? (
         <div className="glass-card p-6 space-y-4 animate-pulse">
-          <div className="flex items-center gap-3 border-b border-[var(--color-border-subtle)] pb-3">
-            <div className="w-5 h-5 rounded bg-white/5 shimmer" />
-            <div className="w-32 h-4 rounded bg-white/5 shimmer" />
+          <div className="flex items-center gap-3 border-b border-white/5 pb-3.5">
+            <div className="w-4 h-4 rounded-full bg-white/5 shimmer" />
+            <div className="w-28 h-3.5 rounded bg-white/5 shimmer" />
           </div>
-          <div className="space-y-2">
-            <div className="h-4 rounded bg-white/5 shimmer w-11/12" />
-            <div className="h-4 rounded bg-white/5 shimmer w-full" />
-            <div className="h-4 rounded bg-white/5 shimmer w-4/5" />
+          <div className="space-y-2.5">
+            <div className="h-3.5 rounded bg-white/5 shimmer w-11/12" />
+            <div className="h-3.5 rounded bg-white/5 shimmer w-full" />
+            <div className="h-3.5 rounded bg-white/5 shimmer w-2/3" />
           </div>
         </div>
       ) : null}
 
-      {/* Answer View */}
+      {/* Answer Spotlight Card */}
       {answer && !loading ? (
         <div className="glass-card p-6 space-y-5 animate-fade-in">
-          <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-3.5">
+          <div className="flex items-center justify-between border-b border-white/5 pb-4">
             <div className="flex items-center gap-2">
-              <SparklesIcon className="text-[var(--color-accent-primary)]" size={18} />
-              <span className="text-sm font-bold uppercase tracking-wider text-[var(--color-text-secondary)]">
-                FounderOS Intelligence
+              <SparklesIcon className="text-white opacity-85" size={16} />
+              <span className="text-[10px] font-black uppercase tracking-wider text-[var(--color-text-secondary)]">
+                FounderOS Response
               </span>
             </div>
           </div>
-          <p className="text-sm text-[var(--color-text-primary)] leading-relaxed whitespace-pre-line font-medium">
+          <p className="text-sm text-white leading-relaxed whitespace-pre-line font-semibold">
             {answer}
           </p>
 
           {/* Sources List */}
           {sources.length > 0 ? (
-            <div className="mt-4 pt-4 border-t border-[var(--color-border-subtle)]">
-              <p className="text-xs font-bold tracking-wider uppercase text-[var(--color-text-muted)] mb-3">
-                Cited Memory Fragments ({sources.length})
+            <div className="mt-5 pt-4 border-t border-white/5">
+              <p className="text-[10px] font-black tracking-widest uppercase text-[var(--color-text-muted)] mb-3">
+                Cited Memory Fragments
               </p>
-              <div className="space-y-2.5">
+              <div className="grid grid-cols-1 gap-2.5">
                 {sources.map((src, i) => {
                   let badgeTypeClass = 'badge-idea';
                   if (src.entry_type === 'decision') badgeTypeClass = 'badge-decision';
@@ -274,14 +272,14 @@ export default function VoiceQuery() {
                   if (src.entry_type === 'pattern') badgeTypeClass = 'badge-pattern';
 
                   return (
-                    <div key={i} className="flex items-center gap-3 text-xs bg-white/1.5 p-2 rounded-xl border border-white/3 hover:border-white/8 transition-colors">
-                      <span className={`inline-flex px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold uppercase tracking-wider ${badgeTypeClass}`}>
+                    <div key={i} className="flex items-center gap-3 bg-white/2 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                      <span className={`inline-flex px-2 py-0.5 rounded-full font-mono text-[9px] font-bold uppercase tracking-wider ${badgeTypeClass}`}>
                         {src.entry_type}
                       </span>
-                      <span className="text-[var(--color-text-secondary)] flex-1 line-clamp-1 font-medium">
+                      <span className="text-[var(--color-text-secondary)] flex-1 line-clamp-1 font-semibold text-xs">
                         {src.text}
                       </span>
-                      <span className="font-mono text-[var(--color-text-muted)] font-bold bg-white/5 px-2 py-0.5 rounded-md">
+                      <span className="font-mono text-[var(--color-text-muted)] text-[10px] font-bold">
                         {Math.round(src.score * 100)}% Match
                       </span>
                     </div>
@@ -295,8 +293,8 @@ export default function VoiceQuery() {
 
       {/* Suggested Prompts */}
       {!answer && !loading ? (
-        <div className="space-y-3 pt-2">
-          <p className="text-xs font-bold tracking-wider uppercase text-[var(--color-text-muted)] text-center">
+        <div className="space-y-4 pt-2">
+          <p className="text-[10px] font-black tracking-widest uppercase text-[var(--color-text-muted)] text-center">
             Suggested Queries
           </p>
           <div className="flex flex-wrap justify-center gap-2 max-w-xl mx-auto">
@@ -309,7 +307,7 @@ export default function VoiceQuery() {
               <button
                 key={prompt}
                 onClick={() => { setQuestion(prompt); setLogMode(false); }}
-                className="text-xs px-4 py-2 rounded-xl border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-glow)] transition-all cursor-pointer font-medium focus-visible:ring-2 focus-visible:ring-[var(--color-accent-primary)]"
+                className="text-xs px-4.5 py-2.5 rounded-full border border-white/5 text-[var(--color-text-secondary)] hover:text-white hover:border-white/15 hover:bg-white/3 transition-all cursor-pointer font-bold focus-visible:ring-1 focus-visible:ring-white/25"
               >
                 {prompt}
               </button>

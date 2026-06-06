@@ -12,7 +12,7 @@ import {
 } from './icons';
 
 /**
- * FounderOS — Timeline View
+ * FounderOS — Timeline View (Apple Style)
  * Filterable, chronological feed of all captured entries.
  */
 export default function Timeline() {
@@ -74,87 +74,86 @@ export default function Timeline() {
   }, [filter]);
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="w-full space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-white/5 pb-4">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)]">Activity Timeline</h2>
-          <p className="text-sm text-[var(--color-text-secondary)] font-medium mt-1">
+          <h2 className="text-3xl font-extrabold tracking-tight text-white">Activity Timeline</h2>
+          <p className="text-xs text-[var(--color-text-secondary)] font-semibold mt-1">
             {entries.length} entries captured chronologically
           </p>
         </div>
         <button
           onClick={() => fetchEntries(filter)}
-          className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-surface-hover)] transition-all cursor-pointer min-h-[40px] focus-visible:ring-2 focus-visible:ring-[var(--color-accent-primary)]"
+          className="apple-btn apple-btn-secondary px-4 py-2"
         >
           <RefreshIcon size={12} />
           <span>Refresh</span>
         </button>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+      {/* Compact Metrics Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Decisions', count: stats.decisions, color: 'var(--color-decision)', bg: 'rgba(59, 130, 246, 0.08)', Icon: LightningIcon },
-          { label: 'Tasks', count: stats.tasks, color: 'var(--color-task)', bg: 'rgba(16, 185, 129, 0.08)', Icon: CheckIcon },
-          { label: 'Ideas', count: stats.ideas, color: 'var(--color-idea)', bg: 'rgba(245, 158, 11, 0.08)', Icon: IdeaIcon },
-          { label: 'Patterns', count: stats.patterns, color: 'var(--color-pattern)', bg: 'rgba(139, 92, 246, 0.08)', Icon: SparklesIcon },
+          { label: 'Decisions', count: stats.decisions, color: 'var(--color-decision)', bg: 'rgba(47, 128, 237, 0.06)', Icon: LightningIcon },
+          { label: 'Tasks', count: stats.tasks, color: 'var(--color-task)', bg: 'rgba(39, 174, 96, 0.06)', Icon: CheckIcon },
+          { label: 'Ideas', count: stats.ideas, color: 'var(--color-idea)', bg: 'rgba(242, 153, 74, 0.06)', Icon: IdeaIcon },
+          { label: 'Patterns', count: stats.patterns, color: 'var(--color-pattern)', bg: 'rgba(155, 81, 224, 0.06)', Icon: SparklesIcon },
         ].map((stat) => {
           const { Icon } = stat;
           return (
             <div
               key={stat.label}
-              className="glass-card p-5 flex items-center gap-4 border-l-4"
-              style={{ borderLeftColor: stat.color }}
+              className="glass-card p-4 flex flex-col justify-between h-24"
+              style={{ borderLeft: `3px solid ${stat.color}` }}
             >
-              <div 
-                className="w-12 h-12 rounded-2xl flex items-center justify-center" 
-                style={{ background: stat.bg, color: stat.color }}
-              >
-                <Icon size={20} />
-              </div>
-              <div>
-                <div className="text-3xl font-black font-mono tracking-tight text-[var(--color-text-primary)]">
-                  {stat.count}
-                </div>
-                <div className="text-xs text-[var(--color-text-muted)] font-bold uppercase tracking-wider mt-0.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[var(--color-text-muted)]">
                   {stat.label}
-                </div>
+                </span>
+                <span style={{ color: stat.color }}>
+                  <Icon size={14} />
+                </span>
+              </div>
+              <div className="text-2xl font-black font-mono tracking-tight text-white mt-1">
+                {stat.count}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Filters Navigation */}
-      <div className="flex flex-wrap gap-2.5" role="tablist" aria-label="Filter timeline entries">
-        {filters.map((f) => {
-          const { Icon } = f;
-          const isSelected = filter === f.id;
-          return (
-            <button
-              key={f.id}
-              onClick={() => setFilter(f.id)}
-              role="tab"
-              aria-selected={isSelected}
-              className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs uppercase tracking-wider font-bold transition-all cursor-pointer min-h-[44px] focus-visible:ring-2 focus-visible:ring-[var(--color-accent-primary)] ${
-                isSelected
-                  ? 'bg-[var(--color-accent-primary)] text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)] border border-[var(--color-accent-primary)]'
-                  : 'glass-card text-[var(--color-text-secondary)] border-[var(--color-border-subtle)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-accent-primary)]'
-              }`}
-            >
-              <Icon size={14} />
-              <span>{f.label}</span>
-            </button>
-          );
-        })}
+      {/* Apple Style Segment Selector Tabbed Navigation */}
+      <div className="flex justify-center">
+        <div className="inline-flex rounded-full bg-white/3 border border-white/5 p-1" role="tablist" aria-label="Filter timeline entries">
+          {filters.map((f) => {
+            const { Icon } = f;
+            const isSelected = filter === f.id;
+            return (
+              <button
+                key={f.id}
+                onClick={() => setFilter(f.id)}
+                role="tab"
+                aria-selected={isSelected}
+                className={`flex items-center gap-1.5 px-4.5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer focus-visible:ring-1 focus-visible:ring-white/20 ${
+                  isSelected
+                    ? 'bg-white text-black shadow-lg font-bold'
+                    : 'text-[var(--color-text-secondary)] hover:text-white'
+                }`}
+              >
+                <Icon size={12} />
+                <span>{f.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Error View */}
       {error ? (
-        <div className="glass-card p-5 border-red-500/20 bg-red-500/5 flex items-center gap-3">
+        <div className="glass-card p-4.5 border-red-500/20 bg-red-500/2 flex items-center gap-3 rounded-2xl animate-fade-in">
           <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-          <p className="text-sm text-red-400 font-medium">{error}</p>
+          <p className="text-xs text-red-400 font-semibold">{error}</p>
         </div>
       ) : null}
 
@@ -162,30 +161,28 @@ export default function Timeline() {
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="glass-card p-5 space-y-3 animate-pulse">
-              <div className="flex gap-2.5">
-                <div className="shimmer h-5 rounded w-16 bg-white/5" />
-                <div className="shimmer h-5 rounded w-24 bg-white/5" />
+            <div key={i} className="glass-card p-5 space-y-3.5 animate-pulse rounded-2xl">
+              <div className="flex gap-2">
+                <div className="shimmer h-4 rounded w-16 bg-white/5" />
+                <div className="shimmer h-4 rounded w-24 bg-white/5" />
               </div>
-              <div className="shimmer h-4 rounded w-11/12 bg-white/5" />
-              <div className="shimmer h-4 rounded w-3/4 bg-white/5" />
+              <div className="shimmer h-3.5 rounded w-11/12 bg-white/5" />
+              <div className="shimmer h-3.5 rounded w-2/3 bg-white/5" />
             </div>
           ))}
         </div>
       ) : null}
 
-      {/* Empty State View */}
+      {/* Empty State */}
       {!loading && entries.length === 0 ? (
-        <div className="glass-card p-16 text-center max-w-xl mx-auto space-y-4">
-          <div className="w-16 h-16 rounded-full bg-white/3 text-[var(--color-text-muted)] flex items-center justify-center mx-auto border border-white/5">
-            <MicIcon size={24} />
+        <div className="glass-card p-12 text-center max-w-md mx-auto space-y-4 rounded-2xl animate-fade-in">
+          <div className="w-14 h-14 rounded-full bg-white/3 text-[var(--color-text-muted)] flex items-center justify-center mx-auto border border-white/5">
+            <MicIcon size={20} />
           </div>
           <div className="space-y-1">
-            <h3 className="text-xl font-bold text-[var(--color-text-primary)]">
-              No entries found
-            </h3>
-            <p className="text-sm text-[var(--color-text-secondary)] font-medium max-w-sm mx-auto">
-              Start speaking into your Omi device, or use the "Log Thought" feature to populate your dashboard memory.
+            <h3 className="text-lg font-bold text-white">No entries logged</h3>
+            <p className="text-xs text-[var(--color-text-secondary)] font-medium max-w-xs mx-auto">
+              Your Chief of Staff memory is empty. Use voice capture or the "Log Thought" console to begin tracking execution.
             </p>
           </div>
         </div>

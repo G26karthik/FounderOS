@@ -61,7 +61,7 @@ FounderOS features a dark-mode dashboard tailored for visual excellence and high
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
 | **Voice Capture** | **Omi** | Captures conversational audio & streams completion webhook |
-| **Agent Orchestration** | **Lyzr Core API** | Orchestrates 4 parallel agents extracting insights from transcripts |
+| **Agent Orchestration** | **Lyzr Core API** | Orchestrates 5 agents: three extractors (decisions, tasks, ideas) run in parallel, then a pattern synthesizer and a question-answering agent |
 | **Vector Memory** | **Qdrant Cloud** | High-performance semantic vector search and metadata retrieval |
 | **Embeddings** | **OpenAI** | Generates 1536-dimensional embeddings (`text-embedding-3-small`) |
 | **Backend API** | **FastAPI** | REST API routing, webhook parsing, and CORS control |
